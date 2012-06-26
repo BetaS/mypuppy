@@ -18,8 +18,8 @@ from jsonrpc.proxy import JSONRPCProxy
 import socket
 
 class JSONResult:
-    def __init__(self, type="result", code=0, msg="", item=[]):
-        self.type = type
+    def __init__(self, result="ok", code=0, msg="", item=[]):
+        self.result = result
         self.code = code
         self.msg = msg
 
@@ -32,9 +32,9 @@ class JSONResult:
 
     def __str__(self):
         result = {
-            "time": timeutil.now(),
-            "type": self.type,
+            "result": self.result,
             "code": self.code,
+            "time": timeutil.now(),
             "msg": self.msg,
             "length": self.len,
             "items": self.items
@@ -59,7 +59,7 @@ class Event(ServerEvents):
         if rpcrequest.method != "is_jsonrpc_alive":
             timeutil.end(s_time, rpcrequest.kwargs, rpcrequest.method)
 
-        return result
+        return str(result)
     
     def is_jsonrpc_alive(self):
         """ 클라에서 json rpc서버가 살아 있는지 체크 하기 위한 더미 함수""" 

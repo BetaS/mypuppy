@@ -7,7 +7,8 @@ class User:
 
     @classmethod
     def register(cls, email, passwd, name, birth, gender):
-        authkey = hashlib.sha256(email+"+"+passwd).digest()
+        passwd = hashlib.md5(passwd).hexdigest()
+        authkey = hashlib.sha256(email+"+"+passwd).hexdigest()
         ENTITY_DB.insert({"email": email, "passwd": passwd, "authkey": authkey, "name": name, "gender": gender, "birth": birth}, tb="user")
 
         return ENTITY_DB.get_id({"email": email}, tb="user"), authkey
@@ -25,6 +26,7 @@ class User:
 
     @classmethod
     def authenticate(cls, email, passwd):
+        passwd = hashlib.md5(passwd).hexdigest()
         return ENTITY_DB.get_id(where={"email": email, "passwd": passwd}, field="authkey", tb="user")
 
 

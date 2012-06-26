@@ -17,27 +17,26 @@ class RPCServer(rpcutil.Event):
     def userAuthenticate(self, email, passwd):
         result = User.authenticate(email, passwd)
         if not result:
-            return JSONResult(type="error", code=DEBUG, msg="Can't find User")
+            return JSONResult(result="error", code=DEBUG, msg="Can't find User")
         else:
-            return JSONResult(type="result", item=result)
+            return JSONResult(result="ok", item=result)
 
     def userLogin(self, authkey):
         result = User.login(authkey)
         if len(result) > 0:
-            return JSONResult(type="result", item=result[0])
+            return JSONResult(result="ok", item=result[0])
         else:
-            return JSONResult(type="error", code=DEBUG, msg="Can't find User")
+            return JSONResult(result="error", code=DEBUG, msg="Can't find User")
 
     def userCheckEmail(self, email):
-        return JSONResult(type="result", item=User.check_email_valid(email))
+        return JSONResult(result="ok", item=User.check_email_valid(email))
 
     def userRegister(self, email, passwd, name, birth, gender):
         id, authkey = User.register(email, passwd, name, birth, gender)
-
         if id > 0:
-            return JSONResult(type="result", item={"id": id, "authkey": authkey})
+            return JSONResult(result="ok", item={"id": id, "authkey": authkey})
         else:
-            return JSONResult(type="error", code=PROMPT, msg="Can't Register User")
+            return JSONResult(result="error", code=PROMPT, msg="Can't Register User")
 
     # Timeline RPC
     def timelineWrite(self, uid, text, img="", lat=0.0, lng=0.0, meta={}):
