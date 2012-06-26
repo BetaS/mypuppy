@@ -1,10 +1,9 @@
-#coding: utf-8
+#coding: utf8
 
 from mypuppy.src.importer import ENTITY_DB
 import hashlib as hashlib
 
 class User:
-
     @classmethod
     def register(cls, email, passwd, name, birth, gender):
         passwd = hashlib.md5(passwd).hexdigest()
@@ -21,12 +20,12 @@ class User:
             return False
 
     @classmethod
-    def login(cls, authkey):
+    def authenticate(cls, authkey):
         return ENTITY_DB.select_dict(['id', 'name'], {"authkey": authkey}, tb="user")
 
     @classmethod
-    def authenticate(cls, email, passwd):
+    def login(cls, email, passwd):
         passwd = hashlib.md5(passwd).hexdigest()
-        return ENTITY_DB.get_id(where={"email": email, "passwd": passwd}, field="authkey", tb="user")
+        return ENTITY_DB.select_dict(['id', 'authkey', 'name'], {"email": email, "passwd": passwd}, tb="user")
 
 

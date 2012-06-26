@@ -14,22 +14,22 @@ ERROR   = 2
 
 class RPCServer(rpcutil.Event):
     # User RPC
-    def userAuthenticate(self, email, passwd):
-        result = User.authenticate(email, passwd)
-        if not result:
-            return JSONResult(result="error", code=DEBUG, msg="Can't find User")
+    def userLogin(self, email, passwd):
+        result = User.login(email, passwd)
+        if len(result) > 0:
+            return JSONResult(result="ok", item=result[0])
         else:
-            return JSONResult(result="ok", item=result)
+            return JSONResult(result="error", code=DEBUG, msg="Can't find User")
 
-    def userLogin(self, authkey):
-        result = User.login(authkey)
+    def userAuthenticate(self, authkey):
+        result = User.authenticate(authkey)
         if len(result) > 0:
             return JSONResult(result="ok", item=result[0])
         else:
             return JSONResult(result="error", code=DEBUG, msg="Can't find User")
 
     def userCheckEmail(self, email):
-        return JSONResult(result="ok", item=User.check_email_valid(email))
+        return JSONResult(result="ok", item={"check": User.check_email_valid(email)})
 
     def userRegister(self, email, passwd, name, birth, gender):
         id, authkey = User.register(email, passwd, name, birth, gender)
