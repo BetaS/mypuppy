@@ -34,7 +34,7 @@ class JSONResult:
         result = {
             "result": self.result,
             "code": self.code,
-            "time": timeutil.now(),
+            "time": time.today(),
             "msg": self.msg,
             "length": self.len,
             "items": self.items
