@@ -1,6 +1,6 @@
 #coding: utf8
 
-from mypuppy.src.importer import ENTITY_DB
+from mypuppy.src.importer import _SESSION, ENTITY_DB
 import hashlib as hashlib
 
 class User:
