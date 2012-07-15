@@ -7,24 +7,28 @@ import mypuppy.src.rpc.rpcutil as rpcutil
 from rpcutil import JSONResult
 
 from mypuppy.src.data.User import User
+from mypuppy.src.data.Session import Session
 
 DEBUG   = 0
 PROMPT  = 1
 ERROR   = 2
 
+_SESSION = Session()
+
 class RPCServer(rpcutil.Event):
     # User RPC
-    def userLogin(self, email, passwd):
+    def userLogin(self, device_id, email, passwd):
         result = User.login(email, passwd)
         if len(result) > 0:
             return JSONResult(result="ok", item=result[0])
         else:
             return JSONResult(result="error", code=DEBUG, msg="Can't find User")
 
-    def userAuthenticate(self, authkey):
+    def userAuthenticate(self, device_id, authkey):
         result = User.authenticate(authkey)
         if len(result) > 0:
-            return JSONResult(result="ok", item=result[0])
+            session = _SESSION.add(result[0]['id'], device_id)
+            return JSONResult(result="ok", item={"session_key": session})
         else:
             return JSONResult(result="error", code=DEBUG, msg="Can't find User")
 

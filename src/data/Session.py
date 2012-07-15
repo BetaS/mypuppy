@@ -1,29 +1,39 @@
 __author__ = 'newmoni'
 
+import hashlib
 import time, threading
+
+SESSION_EXPIRED_TIME = 600
 
 class Session:
     def __init__(self):
         self.sessions = {}
         threading.Thread(target=self.update).run()
 
-    def add(self, user_id, device_id, ip):
-        if self.sessions.has_key(device_id):
-            return -1
-        else:
-            self.sessions[device_id] = {
-                "user_id": user_id,
-                "ip": ip,
-                "time": time.time()
-            }
+    @staticmethod
+    def _get_session():
+        return hashlib.sha256(str(time.time())).hexdigest()
 
-        return 0
+    def add(self, user_id, device_id):
+        now = time.time()
+        key = Session._get_session()
 
-    def find(self, device_id):
-        if self.sessions.has_key(device_id):
+        self.sessions[key] = {
+            "user_id": user_id,
+            "device_id": device_id,
+            "time": now,
+            "expired_time": now + SESSION_EXPIRED_TIME
+        }
+
+        return key
+
+    def find(self, key):
+        if self.sessions.has_key(key):
             now = time.time()
-            session = self.sessions['device_id']
-            session["time"] = now+600
+
+            session = self.sessions[key]
+
+            session["expired_time"] = now + SESSION_EXPIRED_TIME
             return session['user_id']
         else:
             return -1
@@ -51,6 +61,6 @@ class Session:
     def clear(self):
         self.sessions = {}
 
-    def delete(self, device_id):
-        del self.sessions[device_id]
+    def delete(self, key):
+        del self.sessions[key]
 
