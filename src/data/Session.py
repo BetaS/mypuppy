@@ -10,10 +10,6 @@ class Session:
         self.sessions = {}
         threading.Thread(target=self.update).run()
 
-    @staticmethod
-    def _get_session():
-        return hashlib.sha256(str(time.time())).hexdigest()
-
     def add(self, user_id, device_id):
         now = time.time()
         key = Session._get_session()
@@ -64,3 +60,6 @@ class Session:
     def delete(self, key):
         del self.sessions[key]
 
+    @staticmethod
+    def _get_session():
+        return hashlib.sha256(str(time.time())).hexdigest()
